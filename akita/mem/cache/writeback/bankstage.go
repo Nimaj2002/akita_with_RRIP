@@ -287,6 +287,8 @@ func (s *bankStage) finalizeWriteHit(trans *transaction) bool {
 	block.IsDirty = true
 	block.DirtyMask = dirtyMask
 
+	if s.cache.rrip != nil { s.cache.rrip.OnFill(block) }
+
 	s.removeTransaction(trans)
 
 	s.inflightTransCount--
@@ -363,6 +365,8 @@ func (s *bankStage) finalizeBankWriteFetched(
 
 	block.IsLocked = false
 	block.IsValid = true
+
+	if s.cache.rrip != nil { s.cache.rrip.OnFill(block) }
 
 	s.inflightTransCount--
 

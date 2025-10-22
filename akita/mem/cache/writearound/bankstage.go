@@ -151,6 +151,11 @@ func (s *bankStage) finalizeWriteFetchedTrans(trans *transaction) bool {
 	block.DirtyMask = trans.writeFetchedDirtyMask
 	block.IsLocked = false
 
+	// SRRIP: fetched line is now resident
+	if s.cache.rrip != nil {
+		s.cache.rrip.OnFill(block)
+	}
+
 	s.postPipelineBuf.Pop()
 
 	return true

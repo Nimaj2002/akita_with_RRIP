@@ -40,6 +40,7 @@ type Comp struct {
 	postCoalesceTransactions []*transaction
 
 	isPaused bool
+	rrip     *cache.SRRIPVictimFinder
 }
 
 func (c *Comp) Tick() bool {

@@ -190,7 +190,9 @@ func (b Builder) Build(name string) *Comp {
 
 func (b *Builder) configureCache(cacheModule *Comp) {
 	blockSize := 1 << b.log2BlockSize
-	vimctimFinder := cache.NewLRUVictimFinder()
+	// vimctimFinder := cache.NewLRUVictimFinder()
+	rrip := cache.NewSRRIPVictimFinder()
+	vimctimFinder := rrip
 	numSet := int(b.byteSize / uint64(b.wayAssociativity*blockSize))
 	directory := cache.NewDirectory(
 		numSet, b.wayAssociativity, blockSize, vimctimFinder)
@@ -212,6 +214,7 @@ func (b *Builder) configureCache(cacheModule *Comp) {
 	cacheModule.directory = directory
 	cacheModule.mshr = mshr
 	cacheModule.storage = storage
+	cacheModule.rrip = rrip
 
 	if b.addressToPortMapper == nil {
 		panic(
