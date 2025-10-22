@@ -121,6 +121,11 @@ func (d *directory) processReadHit(
 	d.buf.Pop()
 	tracing.AddTaskStep(trans.id, d.cache, "read-hit")
 
+	// SRRIP: mark as recently used on read hit
+	if d.cache.rrip != nil {
+		d.cache.rrip.OnHit(block)
+	}
+
 	return true
 }
 

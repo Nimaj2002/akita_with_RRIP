@@ -211,11 +211,13 @@ func (b Builder) configureCacheStructures(c *Comp) {
 	numSets := int(b.totalByteSize / uint64(b.wayAssociativity*blockSize))
 
 	c.mshr = cache.NewMSHR(b.numMSHREntry)
+	rrip := cache.NewSRRIPVictimFinder()
 	c.directory = cache.NewDirectory(
-		numSets, b.wayAssociativity, blockSize, cache.NewLRUVictimFinder())
+		numSets, b.wayAssociativity, blockSize, rrip)
 	c.storage = mem.NewStorage(b.totalByteSize)
 	c.bankLatency = b.bankLatency
 	c.wayAssociativity = b.wayAssociativity
+	c.rrip = rrip
 }
 
 func (b Builder) configurAddressMapper(c *Comp) {

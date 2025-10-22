@@ -152,6 +152,7 @@ func (ds *directoryStage) handleReadHit(
 	// 	block.SetID, block.WayID,
 	// 	nil,
 	// )
+	if ds.cache.rrip != nil { ds.cache.rrip.OnHit(block) }
 
 	return ds.readFromBank(trans, block)
 }
@@ -265,6 +266,8 @@ func (ds *directoryStage) doWriteHit(
 	if block.IsLocked || block.ReadCount > 0 {
 		return false
 	}
+
+	if ds.cache.rrip != nil { ds.cache.rrip.OnHit(block) }
 
 	return ds.writeToBank(trans, block)
 }

@@ -143,6 +143,11 @@ func (d *DirectoryImpl) Reset() {
 			d.Sets[i].LRUQueue = append(d.Sets[i].LRUQueue, block)
 		}
 	}
+
+	// NEW: let SRRIP clear its per-block table
+	if r, ok := d.victimFinder.(interface{ Reset() }); ok {
+		r.Reset()
+	}
 }
 
 // WayAssociativity returns the number of ways per set in the cache.

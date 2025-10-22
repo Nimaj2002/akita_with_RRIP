@@ -178,13 +178,16 @@ func (b Builder) Build(name string) *Comp {
 	c.mshr = cache.NewMSHR(b.numMSHREntry)
 	blockSize := 1 << b.log2BlockSize
 	numSets := int(b.totalByteSize / uint64(b.wayAssociativity*blockSize))
+	rrip := cache.NewSRRIPVictimFinder()
 	c.directory = cache.NewDirectory(
 		numSets, b.wayAssociativity, 1<<b.log2BlockSize,
-		cache.NewLRUVictimFinder())
+		// cache.NewLRUVictimFinder())
+		rrip)
 	c.storage = mem.NewStorage(b.totalByteSize)
 	c.bankLatency = b.bankLatency
 	c.wayAssociativity = b.wayAssociativity
 	c.maxNumConcurrentTrans = b.maxNumConcurrentTrans
+	c.rrip = rrip
 
 	b.configureAddressMapper(c)
 

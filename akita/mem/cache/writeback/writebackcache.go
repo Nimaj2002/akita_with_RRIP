@@ -49,6 +49,7 @@ type Comp struct {
 	state                cacheState
 	inFlightTransactions []*transaction
 	evictingList         map[uint64]bool
+	rrip                 *cache.SRRIPVictimFinder
 }
 
 // SetAddressToPortMapper sets the AddressToPortMapper used by the cache.

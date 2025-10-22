@@ -121,6 +121,11 @@ func (d *directory) processReadHit(
 	d.buf.Pop()
 	tracing.AddTaskStep(trans.id, d.cache, "read-hit")
 
+	// SRRIP: mark as recently used on hit
+	if d.cache.rrip != nil {
+		d.cache.rrip.OnHit(block)
+	}
+
 	return true
 }
 
@@ -245,6 +250,11 @@ func (d *directory) processWriteHit(
 
 	tracing.AddTaskStep(trans.id, d.cache, "write-hit")
 	d.buf.Pop()
+
+	// SRRIP: mark as recently used on hit
+	if d.cache.rrip != nil {
+		d.cache.rrip.OnHit(block)
+	}
 
 	return true
 }

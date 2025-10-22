@@ -120,6 +120,8 @@ func (d *directory) processReadHit(
 	d.buf.Pop()
 	tracing.AddTaskStep(trans.id, d.cache, "read-hit")
 
+	if d.cache.rrip != nil { d.cache.rrip.OnHit(block) }
+
 	return true
 }
 
@@ -304,6 +306,8 @@ func (d *directory) processWriteHit(
 		}
 	}
 
+	wasInvalid := !block.IsValid
+
 	write := trans.write
 	addr := write.Address
 	blockSize := uint64(1 << d.cache.log2BlockSize)
@@ -318,6 +322,17 @@ func (d *directory) processWriteHit(
 	bankBuf.Push(trans)
 
 	d.buf.Pop()
+
+	// SRRIP hook:
+	//  - If this was a fresh install (full-line write miss path), treat as insertion.
+	//  - Otherwise (true write hit), treat as re-reference.
+	if d.cache.rrip != nil {
+		if wasInvalid {
+			d.cache.rrip.OnFill(block)
+		} else {
+			d.cache.rrip.OnHit(block)
+		}
+	}
 
 	return true
 }
